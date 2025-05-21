@@ -9,11 +9,6 @@ app.use(express.json());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.use((err, req, res, next) => {
-    res
-      .status(err.status || 500)
-      .json({ error: err.message || 'Internal Server Error' });
-  });
 
 app.listen(8080, () => {
     console.log('Express server is running on http://127.0.0.1:8080')
