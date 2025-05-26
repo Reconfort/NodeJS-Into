@@ -1,8 +1,9 @@
 import 'reflect-metadata';
 import express, { Express } from 'express';
 import * as dotenv from 'dotenv';
-import indexRouter from './routes/index';
-import usersRouter from './routes/users';
+import authRoutes from './routes/auth.routes';
+import welcomeRoutes from './routes/welcome.routes';
+import usersRoutes from './routes/users.routes';
 import { initializeDatabase } from './config/database';
 import { errorHandler } from './middleware/errorHandler';
 
@@ -16,8 +17,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/', welcomeRoutes);
+app.use('/auth', authRoutes);
+app.use('/users', usersRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

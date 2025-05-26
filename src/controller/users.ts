@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction, Router, RequestHandler } from 'express';
-import { UserService } from '../services/UserServices';
+import { UserService } from '../services/user.service';
 import { User } from '../entities/User';
 
 const router: Router = express.Router();

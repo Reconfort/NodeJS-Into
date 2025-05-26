@@ -1,5 +1,5 @@
 import { AppDataSource } from '../config/database';
-import { User } from '../entities/User';
+import { User } from '../modals/User';
 
 export const UserRepository = AppDataSource.getRepository(User).extend({
   async findByName(name: string): Promise<User[]> {
@@ -28,5 +28,9 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
   async deleteUser(id: number): Promise<boolean> {
     const result = await this.delete(id);
     return result.affected ? result.affected > 0 : false;
-  }
+  },
+
+  async findOneByEmail(email: string): Promise<User | null> {
+    return this.findOneBy({ email });
+  },
 });
