@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { UserService } from '../services/user.service';
+import { UserService } from '../services/auth.service';
 import { asyncHandler } from '../middleware/errorHandler';
 import { 
   UpdateUserInput, 

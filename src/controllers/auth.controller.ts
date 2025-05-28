@@ -2,7 +2,9 @@ import { NextFunction, Request, RequestHandler, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
-import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/users.service';
+
 import { generateJWT, generateResetToken, generateVerifyToken } from '../utils/jwt';
 import { sendResetPasswordEmail, sendVerificationEmail } from '../utils/email';
 import { asyncHandler } from '../middleware/errorHandler';
@@ -17,6 +19,7 @@ import {
   import { AuthenticatedRequest, ApiResponse } from '../types/common.types';
   import { ConflictError, NotFoundError, UnauthorizedError, ForbiddenError } from '../utils/errors';
 
+const authService = new AuthService 
 const userService = new UserService 
 
 //Create users
@@ -33,7 +36,7 @@ export const signup = asyncHandler(async (
             throw new ConflictError('User with this email already exists');
         }
 
-        const newUser = await userService.create({ name, email, password, role });
+        const newUser = await authService.create({ name, email, password, role });
         const token = generateVerifyToken({ userId: newUser.id, email: newUser.email });
         const verifyLink = `${process.env.FRONTEND_URL}/verify-email/${token}`;
 
@@ -88,7 +91,7 @@ export const login = asyncHandler(async (
   ) => {
     const { email, password } = req.body;
   
-    const user = await userService.login(email, password);
+    const user = await authService.login(email, password);
     if (!user) {
       throw new UnauthorizedError('Invalid email or password');
     }
