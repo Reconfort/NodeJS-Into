@@ -1,92 +1,116 @@
-import express, { Request, Response, NextFunction, Router, RequestHandler } from 'express';
+import { Response, NextFunction } from 'express';
 import { UserService } from '../services/user.service';
-import { User } from '../modals/User';
+import { asyncHandler } from '../middleware/errorHandler';
+import { 
+  UpdateUserInput, 
+  GetUserByIdInput, 
+  SearchUsersInput, 
+  DeleteUserInput 
+} from '../schema/user.schemas';
+import { AuthenticatedRequest, ApiResponse } from '../types/common.types';
+import { NotFoundError, ConflictError } from '../utils/errors';
 
-const router: Router = express.Router();
 const userService = new UserService();
 
-// GET all users
-export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const users = await userService.findAll();
-    res.json(users);
-  } catch (error) {
-    next(error);
-  }
-};
+export const getAllUsers = asyncHandler(async (
+  req: AuthenticatedRequest, 
+  res: Response<ApiResponse>,
+  next: NextFunction
+) => {
+  const users = await userService.findAll();
+  
+  res.json({
+    success: true,
+    message: 'Users retrieved successfully',
+    data: { users }
+  });
+});
 
-// GET users by search query
-export const search = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const name = req.query.name as string;
-    if (name) {
-      const users = await userService.findByName(name);
-      res.json(users);
-      return;
+export const search = asyncHandler(async (
+  req: AuthenticatedRequest & SearchUsersInput, 
+  res: Response<ApiResponse>,
+  next: NextFunction
+) => {
+  const { name } = req.query;
+  
+  const users = name ? await userService.findByName(name) : [];
+  
+  res.json({
+    success: true,
+    message: 'Search completed successfully',
+    data: { users, count: users.length }
+  });
+});
+
+export const getById = asyncHandler(async (
+  req: AuthenticatedRequest & GetUserByIdInput, 
+  res: Response<ApiResponse>,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  
+  const user = await userService.findById(id);
+  if (!user) {
+    throw new NotFoundError('User');
+  }
+  
+  res.json({
+    success: true,
+    message: 'User retrieved successfully',
+    data: { user }
+  });
+});
+
+export const updateUser = asyncHandler(async (
+  req: AuthenticatedRequest & UpdateUserInput, 
+  res: Response<ApiResponse>,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  // Check if user exists
+  const existingUser = await userService.findById(id);
+  if (!existingUser) {
+    throw new NotFoundError('User');
+  }
+
+  // Check email uniqueness if email is being updated
+  if (updateData.email && updateData.email !== existingUser.email) {
+    const userWithEmail = await userService.findByEmail(updateData.email);
+    if (userWithEmail) {
+      throw new ConflictError('Email is already in use');
     }
-    const allUsers = await userService.findAll();
-    res.json(allUsers);
-  } catch (error) {
-    next(error);
   }
-};
+  
+  const updatedUser = await userService.update(id, updateData);
+  
+  res.json({
+    success: true,
+    message: 'User updated successfully',
+    data: { user: updatedUser }
+  });
+});
 
-// GET user by ID
-export const getById = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const user = await userService.findById(userId);
-    
-    if (!user) {
-      const err: Error & { status?: number } = new Error('User not found');
-      err.status = 404;
-      next(err);
-      return;
-    }
-    
-    res.json(user);
-  } catch (error) {
-    next(error);
+export const deleteUser = asyncHandler(async (
+  req: AuthenticatedRequest & DeleteUserInput, 
+  res: Response<ApiResponse>,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  
+  const user = await userService.findById(id);
+  if (!user) {
+    throw new NotFoundError('User');
   }
-};
-
-// PUT update user
-export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const userData: Partial<User> = req.body;
-    
-    const updatedUser = await userService.update(userId, userData);
-    if (!updatedUser) {
-      const err: Error & { status?: number } = new Error('User not found');
-      err.status = 404;
-      next(err);
-      return;
-    }
-    
-    res.json(updatedUser);
-  } catch (error) {
-    next(error);
+  
+  const deleted = await userService.delete(id);
+  if (!deleted) {
+    throw new Error('Failed to delete user');
   }
-};
-
-// DELETE user
-export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const deleted = await userService.delete(userId);
-    
-    if (!deleted) {
-      const err: Error & { status?: number } = new Error('User not found');
-      err.status = 404;
-      next(err);
-      return;
-    }
-    
-    res.status(204).send();
-  } catch (error) {
-    next(error);
-  }
-};
-
-export default router;
+  
+  res.json({
+    success: true,
+    message: 'User deleted successfully'
+  });
+});
