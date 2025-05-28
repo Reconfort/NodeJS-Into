@@ -6,7 +6,7 @@ const router: Router = express.Router();
 const userService = new UserService();
 
 // GET all users
-export const getAllUsers =  async (req: Request, res: Response, next: NextFunction) => {
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await userService.findAll();
     res.json(users);
@@ -16,19 +16,20 @@ export const getAllUsers =  async (req: Request, res: Response, next: NextFuncti
 };
 
 // GET users by search query
-export const search = (async(req: Request, res: Response, next: NextFunction) => {
+export const search = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const name = req.query.name as string;
     if (name) {
       const users = await userService.findByName(name);
-      return res.json(users);
+      res.json(users);
+      return;
     }
     const allUsers = await userService.findAll();
     res.json(allUsers);
   } catch (error) {
     next(error);
   }
-}) as RequestHandler;
+};
 
 // GET user by ID
 export const getById = async (req: Request, res: Response, next: NextFunction) => {
@@ -39,7 +40,8 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
     if (!user) {
       const err: Error & { status?: number } = new Error('User not found');
       err.status = 404;
-      return next(err);
+      next(err);
+      return;
     }
     
     res.json(user);
@@ -58,7 +60,8 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     if (!updatedUser) {
       const err: Error & { status?: number } = new Error('User not found');
       err.status = 404;
-      return next(err);
+      next(err);
+      return;
     }
     
     res.json(updatedUser);
@@ -76,7 +79,8 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
     if (!deleted) {
       const err: Error & { status?: number } = new Error('User not found');
       err.status = 404;
-      return next(err);
+      next(err);
+      return;
     }
     
     res.status(204).send();

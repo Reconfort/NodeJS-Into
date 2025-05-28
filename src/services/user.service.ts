@@ -39,8 +39,12 @@ export class UserService {
     return UserRepository.findByName(name);
   }
 
-  async update(id: number, userData: Partial<User>): Promise<User | null> {
-    return UserRepository.updateUser(id, userData);
+  async findByEmail(email: string): Promise<User | null> {
+    return UserRepository.findOneByEmail(email);
+  }
+
+  async update(id: number, updatedData: Partial<User>): Promise<User | null> {
+    return UserRepository.updateUser(id, updatedData);
   }
 
   async delete(id: number): Promise<boolean> {
