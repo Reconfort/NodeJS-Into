@@ -43,3 +43,9 @@ export class AppError extends Error {
       super(message, 409);
     }
   }
+
+  export class BadRequestError extends AppError {
+    constructor(message = 'Bad request - Invalid input data') {
+      super(message, 400);
+    }
+  }

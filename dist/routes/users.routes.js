@@ -1,38 +1,23 @@
-import express, { Router } from 'express';
-import { 
-  getAllUsers, 
-  search, 
-  getById, 
-  updateUser, 
-  deleteUser, 
-  deleteFile,
-  uploadFiles
-} from '../controllers/users.controller';
-import { authenticated } from '../middleware/auth.middleware';
-import { authorize } from '../middleware/authorize';
-import { validate } from '../middleware/validation.middleware';
-import { 
-  getUserByIdSchema, 
-  updateUserSchema, 
-  deleteUserSchema, 
-  searchUsersSchema 
-} from '../schema/user.schemas';
-import { uploadUserFiles } from '../services/upload.service';
-
-const router: Router = express.Router();
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const users_controller_1 = require("../controllers/users.controller");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const authorize_1 = require("../middleware/authorize");
+const validation_middleware_1 = require("../middleware/validation.middleware");
+const user_schemas_1 = require("../schema/user.schemas");
+const upload_service_1 = require("../services/upload.service");
+const router = express_1.default.Router();
 // Public routes
-router.get('/search', validate(searchUsersSchema), search);
-
+router.get('/search', (0, validation_middleware_1.validate)(user_schemas_1.searchUsersSchema), users_controller_1.search);
 // Protected routes - require authentication
-router.use(authenticated);
-
+router.use(auth_middleware_1.authenticated);
 // Any authenticated user can view user details
-router.get('/:id', validate(getUserByIdSchema), getById);
-
-
+router.get('/:id', (0, validation_middleware_1.validate)(user_schemas_1.getUserByIdSchema), users_controller_1.getById);
 // Only admins can update or delete users
-
 // File upload routes (users can manage their own files)
 /**
  * @swagger
@@ -94,8 +79,7 @@ router.get('/:id', validate(getUserByIdSchema), getById);
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.post('/upload', uploadUserFiles, uploadFiles);
-
+router.post('/upload', upload_service_1.uploadUserFiles, users_controller_1.uploadFiles);
 /**
  * @swagger
  * /users/files/{fileType}:
@@ -126,8 +110,7 @@ router.post('/upload', uploadUserFiles, uploadFiles);
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.delete('/files/:fileType', deleteFile);
-
+router.delete('/files/:fileType', users_controller_1.deleteFile);
 // Only admins can update or delete users
 /**
  * @swagger
@@ -205,18 +188,8 @@ router.delete('/files/:fileType', deleteFile);
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.get('/', authorize(['admin']), getAllUsers);
-
-router.put('/:id', 
-  authorize(['admin']), 
-  validate(updateUserSchema), 
-  updateUser
-);
-
-router.delete('/:id', 
-  authorize(['admin']), 
-  validate(deleteUserSchema), 
-  deleteUser
-);
-
-export default router;
+router.get('/', (0, authorize_1.authorize)(['admin']), users_controller_1.getAllUsers);
+router.put('/:id', (0, authorize_1.authorize)(['admin']), (0, validation_middleware_1.validate)(user_schemas_1.updateUserSchema), users_controller_1.updateUser);
+router.delete('/:id', (0, authorize_1.authorize)(['admin']), (0, validation_middleware_1.validate)(user_schemas_1.deleteUserSchema), users_controller_1.deleteUser);
+exports.default = router;
+//# sourceMappingURL=users.routes.js.map

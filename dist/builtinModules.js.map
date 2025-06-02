@@ -1,0 +1,1 @@
+{"version":3,"file":"builtinModules.js","sourceRoot":"","sources":["../src/builtinModules.ts"],"names":[],"mappings":";;;;;AAAA,gDAAwB;AACxB,0DAAkC;AAElC,OAAO,CAAC,GAAG,CAAC,eAAe,EAAE,cAAI,CAAC,QAAQ,CAAC,UAAU,CAAC,CAAC,CAAC;AACxD,OAAO,CAAC,GAAG,CAAC,YAAY,EAAE,cAAI,CAAC,QAAQ,CAAC,SAAS,CAAC,CAAC,CAAC;AACpD,OAAO,CAAC,GAAG,CAAC,IAAA,kBAAQ,EAAC,WAAW,CAAC,CAAC,CAAC"}

@@ -24,6 +24,16 @@ export class User {
   @Column({ default: true })
   isActive!: boolean;
 
+  // New file upload fields
+  @Column({ nullable: true })
+  profileImage?: string; // Cloudinary URL
+
+  @Column({ nullable: true })
+  cvFile?: string; // Cloudinary URL
+
+  @Column({ nullable: true })
+  introVideo?: string; // Cloudinary URL
+
   @CreateDateColumn()
   createdAt!: Date;
 
