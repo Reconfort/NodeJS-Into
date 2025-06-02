@@ -16,8 +16,8 @@ import {
     ResetPasswordInput, 
     VerifyEmailInput 
   } from '../schema/auth.schemas';
-  import { AuthenticatedRequest, ApiResponse } from '../types/common.types';
-  import { ConflictError, NotFoundError, UnauthorizedError, ForbiddenError } from '../utils/errors';
+import { AuthenticatedRequest, ApiResponse } from '../types/common.types';
+import { ConflictError, NotFoundError, UnauthorizedError, ForbiddenError } from '../utils/errors';
 
 const authService = new AuthService 
 const userService = new UserService 

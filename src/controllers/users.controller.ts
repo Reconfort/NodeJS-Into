@@ -17,7 +17,11 @@ export const getAllUsers = asyncHandler(async (
   res: Response<ApiResponse>,
   next: NextFunction
 ) => {
-  const users = await userService.findAll();
+
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+  
+  const users = await userService.findAll(page, limit);
   
   res.json({
     success: true,

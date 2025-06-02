@@ -5,8 +5,13 @@ import bcrypt from "bcrypt";
 export class UserService {
   private userRepository = AppDataSource.getRepository(User);
 
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+  async findAll(page:number, limit:number): Promise<{ users: User[]; total: number }>  {
+    const [users, total] =  await this.userRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {users, total}
   }
 
   async findById(id: number): Promise<User | null> {
