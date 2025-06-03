@@ -1,7 +1,7 @@
 {
   "name": "nodejs-intro",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "dist/app.js",
   "scripts": {
     "start": "node dist/app.js",
     "devStart": "ts-node src/app.ts",

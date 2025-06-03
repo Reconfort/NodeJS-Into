@@ -39,6 +39,10 @@ export const options = {
         {
           name: 'Welcome',
           description: 'Welcome and health check endpoints',
+        },
+        {
+          name: 'Test',
+          description: "Test agAIN"
         }
       ],
       components: {

@@ -22,9 +22,7 @@ const router: Router = express.Router();
  * /auth/signup:
  *   post:
  *     tags:
- *       - Auth
- *     summary: Register a new user
- *     description: Create a new user account with email and password
+ *       - Test
  *     requestBody:
  *       required: true
  *       content:
